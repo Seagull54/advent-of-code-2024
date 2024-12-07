@@ -8,7 +8,6 @@ import java.util.*;
 public class D5 {
 
     public static void main(String[] args) throws IOException {
-
         System.out.println(day5("src/main/resources/day5/rules_big.txt", "src/main/resources/day5/records_big.txt"));
     }
 
@@ -27,7 +26,7 @@ public class D5 {
                 .map(line -> line.split(","))
                 .map(Arrays::asList)
                 .filter(readings -> !validateLine(readings, beforeMap, afterMap))
-                .peek(readings -> fixArray(readings, beforeMap, afterMap))
+                .map(readings -> findValue(readings, beforeMap, afterMap))
                 .map(readings -> Integer.parseInt(readings.get(readings.size()/2)))
                 .reduce(Integer::sum)
                 .orElse(0);
@@ -69,82 +68,47 @@ public class D5 {
         return true;
     }
 
-    public static boolean validateAndFixLine(List<String> readings, Map<String, Set<String>> beforeMap, Map<String, Set<String>> afterMap) {
+    public static List<String> findValue(List<String> readings, Map<String, Set<String>> beforeMap, Map<String, Set<String>> afterMap) {
+        while (findLineValue(readings, beforeMap, afterMap)) {}
+
+        return readings;
+    }
+
+    public static boolean findLineValue(List<String> readings, Map<String, Set<String>> beforeMap, Map<String, Set<String>> afterMap) {
         List<String> beforeSet = new ArrayList<>();
         List<String> afterSet = new ArrayList<>(readings);
 
-        boolean fixNeeded = true;
-        while (fixNeeded) {
-            fixNeeded = false;
-            while (!afterSet.isEmpty()) {
-                boolean exchangeHappened = false;
-                String reading = afterSet.getFirst();
+        while (!afterSet.isEmpty()) {
+            String reading = afterSet.getFirst();
 
-                for (int i = 0; i < beforeSet.size() && !exchangeHappened; i++) {
-                    String read = beforeSet.get(i);
-                    if (afterMap.containsKey(reading) && afterMap.get(reading).contains(read)) {
-                        afterSet.set(0,read);
-                        beforeSet.set(i, reading);
-                        exchangeHappened = true;
-                    }
-                }
+            String r = beforeSet.stream().filter(
+                read -> afterMap.containsKey(reading) && afterMap.get(reading).contains(read)
+            ).findFirst().orElse("");
 
-                if (exchangeHappened) {
-                    fixNeeded = true;
-                    beforeSet.addAll(afterSet);
-                    afterSet = beforeSet;
-                    beforeSet = new ArrayList<>();
-                    continue;
-                }
-
-                beforeSet.add(reading);
-
-                afterSet.removeFirst();
-
-                for (int i = 0; i < afterSet.size() && !exchangeHappened; i++) {
-                    String read = afterSet.get(i);
-                    if (beforeMap.containsKey(reading) && beforeMap.get(reading).contains(read)) {
-                        beforeSet.set(0,read);
-                        afterSet.set(i, reading);
-                        exchangeHappened = true;
-                    }
-                }
-
-                if (exchangeHappened) {
-                    fixNeeded = true;
-                    beforeSet.addAll(afterSet);
-                    afterSet = beforeSet;
-                    beforeSet = new ArrayList<>();
-                    continue;
-                }
-
-                boolean beforeIsBad = afterSet.stream().anyMatch(
-                    read -> beforeMap.containsKey(reading) && beforeMap.get(reading).contains(read)
-                );
-                if (beforeIsBad) {
-                    return false;
-                }
-
+            if (!r.isBlank()) {
+                int index1 = readings.lastIndexOf(reading);
+                int index2 = readings.indexOf(r);
+                readings.set(index1, r);
+                readings.set(index2, reading);
+                return true;
             }
+            beforeSet.add(reading);
+
+            afterSet.removeFirst();
+
+            r = afterSet.stream().filter(
+                    read -> beforeMap.containsKey(reading) && beforeMap.get(reading).contains(read)
+            ).findFirst().orElse("");
+
+            if (!r.isBlank()) {
+                int index1 = readings.indexOf(reading);
+                int index2 = readings.lastIndexOf(r);
+                readings.set(index1, r);
+                readings.set(index2, reading);
+                return true;
+            }
+
         }
-        return true;
-
+        return false;
     }
-
-    public static void fixArray(List<String> readings, Map<String, Set<String>> beforeMap, Map<String, Set<String>> afterMap) {
-        System.out.println("fixing line with size " + readings.size());
-        while (!validateLine(readings, beforeMap, afterMap)) {
-            Collections.shuffle(readings);
-        }
-        System.out.println("line fixed");
-    }
-
-    public static void fixArrayBad(List<String> readings, Map<String, Set<String>> beforeMap, Map<String, Set<String>> afterMap) {
-        System.out.println("fixing line with size " + readings.size());
-        while (!validateLine(readings, beforeMap, afterMap)) {
-            Collections.shuffle(readings);
-        }
-        System.out.println("line fixed");
-    }
-
 }
