@@ -15,8 +15,8 @@ public class Day13 {
     String pattern = "(\\d+)";
     Pattern pat = Pattern.compile(pattern);
 
-    private static String testFile = "src/main/resources/y2024/d11_test.txt";
-    private static String inputFile = "src/main/resources/y2024/d11_input.txt";
+    private static String testFile = "src/main/resources/y2024/d13_test.txt";
+    private static String inputFile = "src/main/resources/y2024/d13_input.txt";
 
     public static void main(String[] args) throws IOException {
         Day13 d = new Day13();
