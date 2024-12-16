@@ -28,7 +28,7 @@ public class Day14 {
 //        List<RobotCase> cases = day14.readFile(testFile);
         List<RobotCase> cases = day14.readFile(inputFile);
 //        System.out.println(day14.part1(cases, day14.secondsToPredict));
-        int treeSeconds = day14.solvePt2(cases);
+        int treeSeconds = day14.solvePtFile2(cases);
         System.out.println("tree found " + treeSeconds + " seconds");
     }
 
@@ -57,7 +57,7 @@ public class Day14 {
         char[][] matrix = part2(input, 0);
         int i = 1;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("results3.txt", true))){
-            while (i < 100000) {
+            while (i < 10000) {
                 writer.write(String.valueOf(i));
                 writer.newLine();
                 matrix = part2(input, i);
