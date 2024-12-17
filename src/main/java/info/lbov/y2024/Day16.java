@@ -88,9 +88,11 @@ public class Day16 {
 
         pq.add(start);
 
+        int iter = 0;
         int bestPath = -1;
         boolean pathFound = false;
         while (!pq.isEmpty()) {
+            iter++;
             QueueEntry entry = pq.poll();
 
             if (entry.pos.equals(endPos) && (!pathFound || bestPath == entry.score)) {
@@ -106,6 +108,7 @@ public class Day16 {
                 pq.addAll(getAvailPaths(map, entry));
             }
         }
+        System.out.println("iterations " + iter);
         return bestPath;
     }
 
