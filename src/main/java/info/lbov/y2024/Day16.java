@@ -33,14 +33,14 @@ public class Day16 {
         System.out.println(counter);
     }
 
-    private static void printMap(char[][] map) {
+    public static void printMap(char[][] map) {
         for (int j = 0; j < map.length; j++) {
             System.out.println(new String(map[j]));
         }
     }
 
 
-    private static void printIntMap(int[][] map) {
+    public static void printIntMap(int[][] map) {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 System.out.print(map[i][j] + " ");
